@@ -1,5 +1,5 @@
 
-SYSCONF_LINK = /usr/bin/g++
+SYSCONF_LINK = clang++
 CPPFLAGS     =
 LDFLAGS      =
 LIBS         = -lm
