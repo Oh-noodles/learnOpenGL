@@ -1,11 +1,13 @@
+#include "glm/detail/type_mat.hpp"
+#include "glm/detail/type_vec.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <OpenGL/OpenGL.h>
-#include <iostream>
-#include <learn/shader_s.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+#include <learn/shader_s.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <learn/stb_image.h>
 
@@ -41,8 +43,7 @@ int main() {
     return -1;
   }
 
-  Shader ourShader("src/hello_transform/shader.vs",
-                   "src/hello_transform/shader.fs");
+  Shader ourShader("src/hello_3D/shader.vs", "src/hello_3D/shader.fs");
 
   float vertices[] = {// positions          colors            texture coords
                       0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
@@ -91,8 +92,8 @@ int main() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   int width, height, nrChannels;
-  unsigned char *data = stbi_load("resources/textures/container.jpg",
-                                  &width, &height, &nrChannels, 0);
+  unsigned char *data = stbi_load("resources/textures/container.jpg", &width,
+                                  &height, &nrChannels, 0);
   if (data) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                  GL_UNSIGNED_BYTE, data);
@@ -114,9 +115,11 @@ int main() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   stbi_set_flip_vertically_on_load(true);
-  data = stbi_load("resources/textures/awesomeface.png", &width, &height, &nrChannels, 0);
+  data = stbi_load("resources/textures/awesomeface.png", &width, &height,
+                   &nrChannels, 0);
   if (data) {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
   } else {
     std::cout << "Failed to load texture1" << std::endl;
@@ -131,12 +134,30 @@ int main() {
   while (!glfwWindowShouldClose(window)) {
     processInput(window);
 
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-    trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+    /* glm::mat4 trans = glm::mat4(1.0f); */
+    /* trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f)); */
+    /* trans = */
+    /*     glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f)); */
 
-    unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, glm::radians((float)glfwGetTime() * 90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+    glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -(float)glfwGetTime()));
+
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
+
+    /* unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform"); */
+    /* glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans)); */
+
+    unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+    unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
