@@ -1,11 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "glm/detail/type_vec.hpp"
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <iostream>
-#include <vector>
 
 enum Camera_Movement {
   FORWARD,
@@ -46,6 +46,13 @@ class Camera {
 
     // constructor with scalar values
     // posX, posY, posZ, upX, upY, upZ, yaw, pitch
+    Camera(float posX, float posY, float posZ, float wUpX, float wUpY, float wUpZ, float yaw = YAW, float pitch = PITCH) {
+      this->position = glm::vec3(posX, posY, posZ);
+      this->worldUp = glm::vec3(wUpX, wUpY, wUpZ);
+      this->yaw = yaw;
+      this->pitch = pitch;
+      this->updateCameraVectors();
+    }
 
     // return the view matrix
     glm::mat4 GetViewMatrix() {
@@ -74,10 +81,13 @@ class Camera {
     }
 
     void ProcessMouseMovement(float xOffset, float yOffset) {
-      this->yaw += xOffset * SENSITIVITY;
-      this->pitch += yOffset * SENSITIVITY;
-      this->pitch = std::min(this->pitch, 89.0f);
-      this->pitch = std::max(this->pitch, -89.0f);
+      float yaw = this->yaw, pitch = this->pitch;
+      yaw += xOffset * SENSITIVITY;
+      pitch += yOffset * SENSITIVITY;
+      pitch = std::min(pitch, 89.0f);
+      pitch = std::max(pitch, -89.0f);
+      this->yaw = yaw;
+      this->pitch = pitch;
       this->updateCameraVectors();
     }
 
