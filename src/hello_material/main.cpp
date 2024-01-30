@@ -26,6 +26,7 @@ float deltaTime = 0.0f;
 float lastFrameTime = 0.0f;
 
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
 bool firstMouse = true;
 float lastX = SCR_WIDTH / 2.0f, lastY = SCR_HEIGHT / 2.0f;
@@ -63,12 +64,6 @@ int main() {
 
   Shader objectShader("src/hello_material/shader.vs", "src/hello_material/lighting_object_shader.fs");
   Shader lightSourceShader("src/hello_material/shader.vs", "src/hello_material/light_source_shader.fs");
-
-  /* float vertices[] = {// positions          colors            texture coords */
-  /*                     0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, */
-  /*                     0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, */
-  /*                     -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, */
-  /*                     -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f}; */
 
   float vertices[] = {
     // position          // normal
@@ -134,10 +129,6 @@ int main() {
   // position attribute
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
-  /* // color attribute */
-  /* glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), */
-  /*                       (void *)(3 * sizeof(float))); */
-  /* glEnableVertexAttribArray(1); */
   // normal attribute
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
                         (void *)(3 * sizeof(float)));
@@ -197,9 +188,13 @@ void renderObjects(Shader shader, unsigned int VAO) {
   shader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
   shader.setFloat("material.shininess", 32.0f);
   shader.setVec3("light.position", lightPos);
-  shader.setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-  shader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-  shader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+  lightColor.r = sin(glfwGetTime() * 2.0f);
+  lightColor.g = sin(glfwGetTime() * 0.7f);
+  lightColor.b = sin(glfwGetTime() * 1.3f);
+  shader.setVec3("light.ambient", lightColor * glm::vec3(0.2f));
+  shader.setVec3("light.diffuse", lightColor * glm::vec3(0.5f));
+  shader.setVec3("light.specular", lightColor);
 
   glm::vec3 cubePositions[] = {
     glm::vec3( 0.0f, 0.0f, 0.0f),
@@ -229,10 +224,9 @@ void renderLightSource(Shader shader, unsigned int VAO) {
 
   glm::mat4 view = camera.GetViewMatrix();
   glm::mat4 projection = glm::perspective(glm::radians(camera.fov), 800.0f/600.0f, 0.1f, 100.0f);
-  glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-  glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-  glUniform3f(glGetUniformLocation(shader.ID, "lightColor"), 1.0f, 1.0f, 1.0f);
-  glUniform3f(glGetUniformLocation(shader.ID, "objectColor"), 1.0f, 0.5f, 0.31f);
+  shader.setMat4("view", view);
+  shader.setMat4("projection", projection);
+  shader.setVec3("lightColor", lightColor);
 
   glm::mat4 model = glm::mat4(1.0f);
   model = glm::translate(model, lightPos);
