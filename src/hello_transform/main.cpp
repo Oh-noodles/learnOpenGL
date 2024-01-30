@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <OpenGL/OpenGL.h>
 #include <iostream>
-#include <learn/shader_s.h>
+#include <learn/shader_s.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

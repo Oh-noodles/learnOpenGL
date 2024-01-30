@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include <learn/shader_s.h>
+#include <learn/shader_s.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include <learn/stb_image.h>
 

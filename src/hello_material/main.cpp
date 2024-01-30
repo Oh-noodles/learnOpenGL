@@ -61,8 +61,8 @@ int main() {
     return -1;
   }
 
-  Shader objectShader("src/phong_shading/shader.vs", "src/phong_shading/lighting_object_shader.fs");
-  Shader lightSourceShader("src/phong_shading/shader.vs", "src/phong_shading/light_source_shader.fs");
+  Shader objectShader("src/hello_material/shader.vs", "src/hello_material/lighting_object_shader.fs");
+  Shader lightSourceShader("src/hello_material/shader.vs", "src/hello_material/light_source_shader.fs");
 
   /* float vertices[] = {// positions          colors            texture coords */
   /*                     0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, */
@@ -189,12 +189,17 @@ void renderObjects(Shader shader, unsigned int VAO) {
 
   glm::mat4 view = camera.GetViewMatrix();
   glm::mat4 projection = glm::perspective(glm::radians(camera.fov), 800.0f/600.0f, 0.1f, 100.0f);
-  glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-  glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-  glUniform3f(glGetUniformLocation(shader.ID, "lightColor"), 1.0f, 1.0f, 1.0f);
-  glUniform3f(glGetUniformLocation(shader.ID, "objectColor"), 1.0f, 0.5f, 0.31f);
-  glUniform3f(glGetUniformLocation(shader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-  glUniform3f(glGetUniformLocation(shader.ID, "viewPos"), camera.position.x, camera.position.y, camera.position.z);
+  shader.setMat4("view", view);
+  shader.setMat4("projection", projection);
+  shader.setVec3("viewPos", camera.position);
+  shader.setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+  shader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+  shader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+  shader.setFloat("material.shininess", 32.0f);
+  shader.setVec3("light.position", lightPos);
+  shader.setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+  shader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+  shader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
   glm::vec3 cubePositions[] = {
     glm::vec3( 0.0f, 0.0f, 0.0f),
