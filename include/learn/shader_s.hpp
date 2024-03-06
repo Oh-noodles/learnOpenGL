@@ -12,7 +12,10 @@
 class Shader {
     public:
         unsigned int ID;
+
         Shader(const char* vertexPath, const char* fragmentPath) {
+            std::cout << "vertexPath: " << vertexPath << std::endl;
+            std::cout << "fragmentPath: " << fragmentPath << std::endl;
             // 1. retrieve the vertex/fragment source code from filePath
             std::string vertexCode;
             std::string fragmentCode;
@@ -59,6 +62,8 @@ class Shader {
             
             glDeleteShader(vertex);
             glDeleteShader(fragment);
+
+            std::cout << "========= shader initialized =========" << std::endl;
         }
 
         void use() {

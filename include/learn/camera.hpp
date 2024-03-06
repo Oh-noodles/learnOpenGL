@@ -34,6 +34,15 @@ class Camera {
     float fov = FOV;
 
     glm::vec3 worldUp;
+
+    Camera() {
+      this->position = glm::vec3(0.0f, 0.0f, 3.0f);
+      this->worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+      this->yaw = YAW;
+      this->pitch = PITCH;
+      this->updateCameraVectors();
+    }
+
     // constructor with vectors
     // position, up, yaw, pitch
     Camera(glm::vec3 position, glm::vec3 worldUp, float yaw = YAW, float pitch = PITCH) {

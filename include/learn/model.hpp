@@ -2,6 +2,7 @@
 #define MODEL_H
 
 #include "assimp/material.h"
+#include "glm/detail/type_vec.hpp"
 #include <cstring>
 #include <glad/glad.h> 
 
@@ -21,9 +22,9 @@
 #include <map>
 #include <vector>
 
-#define STB_IMAGE_IMPLEMENTATION
+/* #define STB_IMAGE_IMPLEMENTATION */
 #include <learn/stb_image.h>
-
+       //
 using namespace std;
 
 unsigned int TextureFromFile(const char *path, const string &directory, bool gamma = false);
@@ -33,9 +34,11 @@ class Model {
     vector<Texture> textures_loaded;
     vector<Mesh> meshes;
     string directory;
+    glm::vec3 position;
 
-    Model(string const &path) {
+    Model(string const &path, glm::vec3 position) {
       loadModel(path);
+      this->position = position;
     }
 
     void draw(Shader &shader) {
