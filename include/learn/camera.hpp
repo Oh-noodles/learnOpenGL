@@ -35,17 +35,17 @@ class Camera {
 
     glm::vec3 worldUp;
 
-    Camera() {
-      this->position = glm::vec3(0.0f, 0.0f, 3.0f);
-      this->worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-      this->yaw = YAW;
-      this->pitch = PITCH;
-      this->updateCameraVectors();
-    }
+    /* Camera() { */
+    /*   this->position = glm::vec3(0.0f, 0.0f, 3.0f); */
+    /*   this->worldUp = glm::vec3(0.0f, 1.0f, 0.0f); */
+    /*   this->yaw = YAW; */
+    /*   this->pitch = PITCH; */
+    /*   this->updateCameraVectors(); */
+    /* } */
 
     // constructor with vectors
     // position, up, yaw, pitch
-    Camera(glm::vec3 position, glm::vec3 worldUp, float yaw = YAW, float pitch = PITCH) {
+    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) {
       this->position = position;
       this->worldUp = worldUp;
       this->yaw = yaw;

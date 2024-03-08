@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 /* #include "GLFW/glfw3.h" */
 #include "GLFW/glfw3.h"
+#include "engine/scene.hpp"
 #include "glm/detail/type_mat.hpp"
 #include "glm/detail/type_vec.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -12,6 +13,8 @@
 #include "learn/stb_image.h"
 /* #include "learn/camera.hpp" */
 #include <iostream>
+#include <utility>
+#include <vector>
 
 // positions of the point lights
 glm::vec3 pointLightPositions[] = {
@@ -23,6 +26,8 @@ glm::vec3 pointLightPositions[] = {
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window, Camera *camera);
+/* void mouse_callback(GLFWwindow *window, double xPos, double yPos); */
+/* void scroll_callback(GLFWwindow *window, double xOffset, double yOffset); */
 
 GLFWwindow* Engine::createWindow(unsigned int width, unsigned int height) {
   glfwInit();
@@ -63,12 +68,19 @@ Engine::Engine(GLFWwindow *window, unsigned int width, unsigned int height) {
   this->height = height;
   this->objectShader = new Shader("src/engine/shader.vs", "src/engine/shader.fs");
   this->lightSourceShader = new Shader("src/engine/shader.vs", "src/engine/light_source.fs");
-  this->camera = new Camera(glm::vec3(0.0f, 0.0f, 6.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  this->camera = new Camera(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   return;
 }
 
 Engine::~Engine() {
   return;
+}
+
+int Engine::addScene() {
+  Scene *scene = new Scene();
+  scenes.insert(std::pair<std::string, Scene&>(scene->id, *scene));
+  activeScene = scene;
+  return 0;
 }
 
 void Engine::run() {
@@ -89,11 +101,37 @@ void Engine::run() {
 }
 
 int Engine::addModel(string const &path, float x, float y, float z) {
-  models[0] = new Model(path, glm::vec3(x, y, z));
+  if (activeScene == NULL) {
+    std::cout << "no active scene" << std::endl;
+    return -1;
+  }
+  activeScene->addGameObject(path, x, y, z);
+  std::cout << "gameObject added" << std::endl;
   return 0;
+  /* Model *model = new Model(path, glm::vec3(x, y, z)); */
+  /* models.push_back(model); */
+  /* return 0; */
+}
+
+void setupLights(Shader *shader, std::vector<Light*> lights) {
+  for (Light *light: lights) {
+    switch (light->type) {
+      case DIR:
+        shader->setVec3("dirLight.direction", ((DirectionalLight*)light)->direction);
+        shader->setVec3("dirLight.ambient", ((DirectionalLight*)light)->ambient);
+        shader->setVec3("dirLight.diffuse", ((DirectionalLight*)light)->diffuse);
+        shader->setVec3("dirLight.specular", ((DirectionalLight*)light)->specular);
+        break;
+      default:
+        break;
+    }
+  }
 }
 
 void Engine::renderObjects() {
+  if (activeScene == NULL) return;
+
+
   Shader *shader = objectShader;
   shader->use();
   
@@ -106,10 +144,12 @@ void Engine::renderObjects() {
   // set lights
   // directional light
   shader->setVec3("viewPos", camera->position);
+
   shader->setVec3("dirLight.direction", glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f)));
   shader->setVec3("dirLight.ambient", glm::vec3(0.2f));
   shader->setVec3("dirLight.diffuse", glm::vec3(0.5f));
   shader->setVec3("dirLight.specular", glm::vec3(1.0f));
+
   // set point lights
   shader->setVec3("pointLights[0].position", pointLightPositions[0]);
   shader->setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
@@ -155,12 +195,10 @@ void Engine::renderObjects() {
   shader->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
   // translate and render models
-  for (int i = 0; i < 1; i++) {
-    if (models[i] == NULL) continue;
-
-    Model loadedModel = *models[i];
+  for (auto &it: activeScene->gameObjects) {
+    Model &loadedModel = it.second;
     glm::mat4 model = glm::mat4(1.0f);
-    model= glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    model= glm::translate(model, loadedModel.position);
     model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
     shader->setMat4("model", model);
     loadedModel.draw(*shader);
@@ -188,3 +226,26 @@ void processInput(GLFWwindow *window, Camera *camera) {
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     camera->ProcessKeyboard(RIGHT, deltaTime);
 }
+
+/* void mouse_callback(GLFWwindow *window, double xPosIn, double yPosIn) { */
+/*   static bool firstMouse = false; */
+/*   static float lastX = 0; */
+/*   static float lastY = 0; */
+/**/
+/*   float xPos = static_cast<float>(xPosIn); */
+/*   float yPos = static_cast<float>(yPosIn); */
+/**/
+/*   if (firstMouse) { */
+/*     lastX = xPos; */
+/*     lastY = yPos; */
+/*     firstMouse = false; */
+/*   } */
+/**/
+/*   float xOffset = xPos - lastX; */
+/*   float yOffset = lastY - yPos; */
+/**/
+/*   lastX = xPos; */
+/*   lastY = yPos; */
+/**/
+/*   camera.ProcessMouseMovement(xOffset, yOffset); */
+/* } */

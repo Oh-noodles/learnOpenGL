@@ -36,7 +36,7 @@ class Model {
     string directory;
     glm::vec3 position;
 
-    Model(string const &path, glm::vec3 position) {
+    Model(string const &path, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f)) {
       loadModel(path);
       this->position = position;
     }
