@@ -13,8 +13,11 @@
 #include "learn/stb_image.h"
 /* #include "learn/camera.hpp" */
 #include <iostream>
+#include <string>
 #include <utility>
 #include <vector>
+
+using namespace std;
 
 // positions of the point lights
 glm::vec3 pointLightPositions[] = {
@@ -83,6 +86,10 @@ int Engine::addScene() {
   return 0;
 }
 
+Scene& Engine::getActiveScene() {
+  return *activeScene;
+}
+
 void Engine::run() {
   while (!glfwWindowShouldClose(window)) {
     processInput(window, camera);
@@ -113,18 +120,53 @@ int Engine::addModel(string const &path, float x, float y, float z) {
   /* return 0; */
 }
 
-void setupLights(Shader *shader, std::vector<Light*> lights) {
-  for (Light *light: lights) {
-    switch (light->type) {
-      case DIR:
-        shader->setVec3("dirLight.direction", ((DirectionalLight*)light)->direction);
-        shader->setVec3("dirLight.ambient", ((DirectionalLight*)light)->ambient);
-        shader->setVec3("dirLight.diffuse", ((DirectionalLight*)light)->diffuse);
-        shader->setVec3("dirLight.specular", ((DirectionalLight*)light)->specular);
-        break;
-      default:
-        break;
-    }
+void setupLight(Shader *shader, Camera *camera, Light *light) {
+  glm::vec3 vec;
+  std::cout << "light type: " << light->type << std::endl;
+  unsigned int pointLightIdx = 0;
+  switch (light->type) {
+    case DIR:
+      /* direction = ((DirectionalLight*)light)->ambient; */
+      /* std::cout << "direction: " << direction.x << ", " << direction.y << ", " << direction.z << std::endl; */
+      shader->setVec3("dirLight.direction", ((DirectionalLight*)light)->direction);
+      shader->setVec3("dirLight.ambient", ((DirectionalLight*)light)->ambient);
+      shader->setVec3("dirLight.diffuse", ((DirectionalLight*)light)->diffuse);
+      shader->setVec3("dirLight.specular", ((DirectionalLight*)light)->specular);
+      break;
+    case POINT:
+      /* direction = ((DirectionalLight*)light)->ambient; */
+      /* std::cout << "point: " << direction.x << ", " << direction.y << ", " << direction.z << std::endl; */
+      shader->setVec3(string("pointLights[") + to_string(pointLightIdx) + string("].position"), ((PointLight*)light)->position);
+      shader->setVec3(string("pointLights[") + to_string(pointLightIdx) + string("].ambient"), ((PointLight*)light)->ambient);
+      shader->setVec3(string("pointLights[") + to_string(pointLightIdx) + string("].diffuse"), ((PointLight*)light)->diffuse);
+      shader->setVec3(string("pointLights[") + to_string(pointLightIdx) + string("].specular"), ((PointLight*)light)->specular);
+      shader->setFloat(string("pointLights[") + to_string(pointLightIdx) + string("].constant"), ((PointLight*)light)->constant);
+      shader->setFloat(string("pointLights[") + to_string(pointLightIdx) + string("].linear"), ((PointLight*)light)->linear);
+      shader->setFloat(string("pointLights[") + to_string(pointLightIdx) + string("].quadratic"), ((PointLight*)light)->quadratic);
+      pointLightIdx++;
+      /* shader->setVec3("pointLights[0].ambient", ((PointLight*)light)->ambient); */
+      /* shader->setVec3("pointLights[0].diffuse", ((PointLight*)light)->diffuse); */
+      /* shader->setVec3("pointLights[0].specular", ((PointLight*)light)->specular); */
+      /* shader->setFloat("pointLights[0].constant", ((PointLight*)light)->constant); */
+      /* shader->setFloat("pointLights[0].linear", ((PointLight*)light)->linear); */
+      /* shader->setFloat("pointLights[0].quadratic", ((PointLight*)light)->quadratic); */
+      break;
+    case SPOT:
+      shader->setVec3("spotLight.position", camera->position);
+      shader->setVec3("spotLight.direction", camera->front);
+      vec = camera->position;
+      std::cout << "camera.position: " << vec.x << ", " << vec.y << ", " << vec.z << std::endl;
+      shader->setVec3("spotLight.ambient", ((SpotLight*)light)->ambient);
+      shader->setVec3("spotLight.diffuse", ((SpotLight*)light)->diffuse);
+      shader->setVec3("spotLight.specular", ((SpotLight*)light)->specular);
+      shader->setFloat("spotLight.constant", ((SpotLight*)light)->constant);
+      shader->setFloat("spotLight.linear", ((SpotLight*)light)->linear);
+      shader->setFloat("spotLight.quadratic", ((SpotLight*)light)->quadratic);
+      shader->setFloat("spotLight.cutOff", ((SpotLight*)light)->cutOff);
+      shader->setFloat("spotLight.outerCutOff", ((SpotLight*)light)->outerCutOff);
+      break;
+    default:
+      break;
   }
 }
 
@@ -144,55 +186,62 @@ void Engine::renderObjects() {
   // set lights
   // directional light
   shader->setVec3("viewPos", camera->position);
-
-  shader->setVec3("dirLight.direction", glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f)));
-  shader->setVec3("dirLight.ambient", glm::vec3(0.2f));
-  shader->setVec3("dirLight.diffuse", glm::vec3(0.5f));
-  shader->setVec3("dirLight.specular", glm::vec3(1.0f));
-
-  // set point lights
-  shader->setVec3("pointLights[0].position", pointLightPositions[0]);
-  shader->setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-  shader->setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-  shader->setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-  shader->setFloat("pointLights[0].constant", 1.0f);
-  shader->setFloat("pointLights[0].linear", 0.09f);
-  shader->setFloat("pointLights[0].quadratic", 0.032f);
-
-  shader->setVec3("pointLights[1].position", pointLightPositions[1]);
-  shader->setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-  shader->setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-  shader->setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-  shader->setFloat("pointLights[1].constant", 1.0f);
-  shader->setFloat("pointLights[1].linear", 0.09f);
-  shader->setFloat("pointLights[1].quadratic", 0.032f);
   
-  shader->setVec3("pointLights[2].position", pointLightPositions[2]);
-  shader->setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-  shader->setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-  shader->setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-  shader->setFloat("pointLights[2].constant", 1.0f);
-  shader->setFloat("pointLights[2].linear", 0.09f);
-  shader->setFloat("pointLights[2].quadratic", 0.032f);
+  std::cout << "light count: " << activeScene->lights.size() << std::endl;
+  for (auto &lt: activeScene->lights) {
+    Light *light = lt.second;
+    setupLight(shader, camera, light);
+  }
 
-  shader->setVec3("pointLights[3].position", pointLightPositions[3]);
-  shader->setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-  shader->setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-  shader->setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-  shader->setFloat("pointLights[3].constant", 1.0f);
-  shader->setFloat("pointLights[3].linear", 0.09f);
-  shader->setFloat("pointLights[3].quadratic", 0.032f);
-  // spot light
-  shader->setVec3("spotLight.position", camera->position);
-  shader->setVec3("spotLight.direction", camera->front);
-  shader->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-  shader->setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-  shader->setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-  shader->setFloat("spotLight.constant", 1.0f);
-  shader->setFloat("spotLight.linear", 0.09f);
-  shader->setFloat("spotLight.quadratic", 0.032f);
-  shader->setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-  shader->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+  /* // directional light */
+  /* shader->setVec3("dirLight.direction", glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f))); */
+  /* shader->setVec3("dirLight.ambient", glm::vec3(0.2f)); */
+  /* shader->setVec3("dirLight.diffuse", glm::vec3(0.5f)); */
+  /* shader->setVec3("dirLight.specular", glm::vec3(1.0f)); */
+  /**/
+  /* // set point lights */
+  /* shader->setVec3("pointLights[0].position", pointLightPositions[0]); */
+  /* shader->setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f); */
+  /* shader->setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f); */
+  /* shader->setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f); */
+  /* shader->setFloat("pointLights[0].constant", 1.0f); */
+  /* shader->setFloat("pointLights[0].linear", 0.09f); */
+  /* shader->setFloat("pointLights[0].quadratic", 0.032f); */
+  /**/
+  /* shader->setVec3("pointLights[1].position", pointLightPositions[1]); */
+  /* shader->setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f); */
+  /* shader->setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f); */
+  /* shader->setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f); */
+  /* shader->setFloat("pointLights[1].constant", 1.0f); */
+  /* shader->setFloat("pointLights[1].linear", 0.09f); */
+  /* shader->setFloat("pointLights[1].quadratic", 0.032f); */
+  /**/
+  /* shader->setVec3("pointLights[2].position", pointLightPositions[2]); */
+  /* shader->setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f); */
+  /* shader->setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f); */
+  /* shader->setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f); */
+  /* shader->setFloat("pointLights[2].constant", 1.0f); */
+  /* shader->setFloat("pointLights[2].linear", 0.09f); */
+  /* shader->setFloat("pointLights[2].quadratic", 0.032f); */
+  /**/
+  /* shader->setVec3("pointLights[3].position", pointLightPositions[3]); */
+  /* shader->setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f); */
+  /* shader->setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f); */
+  /* shader->setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f); */
+  /* shader->setFloat("pointLights[3].constant", 1.0f); */
+  /* shader->setFloat("pointLights[3].linear", 0.09f); */
+  /* shader->setFloat("pointLights[3].quadratic", 0.032f); */
+  /* // spot light */
+  /* shader->setVec3("spotLight.position", camera->position); */
+  /* shader->setVec3("spotLight.direction", camera->front); */
+  /* shader->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f); */
+  /* shader->setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f); */
+  /* shader->setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f); */
+  /* shader->setFloat("spotLight.constant", 1.0f); */
+  /* shader->setFloat("spotLight.linear", 0.09f); */
+  /* shader->setFloat("spotLight.quadratic", 0.032f); */
+  /* shader->setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f))); */
+  /* shader->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f))); */
 
   // translate and render models
   for (auto &it: activeScene->gameObjects) {

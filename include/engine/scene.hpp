@@ -41,7 +41,6 @@ struct DirectionalLight: Light {
 };
 
 struct PointLight: Light {
-  /* LightType type = POINT; */
   glm::vec3 position;
 
   float constant;
@@ -62,7 +61,6 @@ struct PointLight: Light {
 };
 
 struct SpotLight: Light {
-  LightType type = SPOT;
   glm::vec3 position;
   glm::vec3 direction;
 
@@ -81,13 +79,13 @@ class Scene {
   private:
   public:
     Camera &camera;
-    std::map<std::string, Light> lights;
+    std::map<std::string, Light*> lights;
     std::map<std::string, Model&> gameObjects;
     std::string id;
     Scene();
     ~Scene();
     int addGameObject(std::string const &path, float x, float y, float z);
-    int addLight(Light light);
+    int addLight(Light *light);
 };
 
 #endif // !__SCENE_HPP__
