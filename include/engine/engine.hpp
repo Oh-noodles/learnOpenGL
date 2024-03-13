@@ -28,6 +28,8 @@ class Engine {
     Engine(GLFWwindow *window, unsigned int width, unsigned int height);
     ~Engine();
 
+    void (*renderFrameCallback)(float) = NULL;
+
     void run();
     int addScene();
     Scene& getActiveScene();

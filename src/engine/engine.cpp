@@ -31,7 +31,7 @@ glm::vec3 pointLightPositions[] = {
 unsigned int pointLightIdx = 0;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-void processInput(GLFWwindow *window, Camera &camera);
+void processInput(GLFWwindow *window, Camera &camera, float deltaTime);
 void mouse_callback(GLFWwindow *window, double xPos, double yPos);
 void scroll_callback(GLFWwindow *window, double xOffset, double yOffset);
 
@@ -111,19 +111,29 @@ Scene& Engine::getActiveScene() {
 }
 
 void Engine::run() {
+  float deltaTime = 0.1f;
+  float lastFrameTime = static_cast<float>(glfwGetTime());
 
   while (!glfwWindowShouldClose(window)) {
     if (activeScene == NULL) continue;
 
-    processInput(window, activeScene->camera);
+    /* lastFrameTime = static_cast<float>(glfwGetTime()); */
+    float currentFrameTime = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrameTime - lastFrameTime;
+    lastFrameTime = currentFrameTime;
+
+
+    processInput(window, activeScene->camera, deltaTime);
 
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderObjects();
+    renderFrameCallback(deltaTime);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
+
   }
 
   glfwTerminate();
@@ -230,12 +240,12 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window, Camera &camera) {
-  static float deltaTime = 0.1f;
-  static float lastFrameTime = static_cast<float>(glfwGetTime());
-  float currentFrameTime = static_cast<float>(glfwGetTime());
-  deltaTime = currentFrameTime - lastFrameTime;
-  lastFrameTime = currentFrameTime;
+void processInput(GLFWwindow *window, Camera &camera, float deltaTime) {
+  /* static float deltaTime = 0.1f; */
+  /* static float lastFrameTime = static_cast<float>(glfwGetTime()); */
+  /* float currentFrameTime = static_cast<float>(glfwGetTime()); */
+  /* deltaTime = currentFrameTime - lastFrameTime; */
+  /* lastFrameTime = currentFrameTime; */
 
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);

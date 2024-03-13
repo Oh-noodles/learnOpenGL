@@ -13,6 +13,13 @@ Scene::Scene(): camera(*(new Camera())) {
 
 Scene::~Scene() {}
 
+int Scene::addGameObject(GameObject &gameObject) {
+  std::srand(std::time(nullptr) * std::rand());
+  std::string id = std::to_string(std::rand());
+  gameObjects.insert(std::pair<std::string, GameObject&>(id, gameObject));
+  return 0;
+}
+
 int Scene::addGameObject(
     std::string const &path,
     glm::vec3 position,

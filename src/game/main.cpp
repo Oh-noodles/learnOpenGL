@@ -1,11 +1,17 @@
 #include "engine/engine.hpp"
 #include "engine/scene.hpp"
+#include "game/tank.hpp"
 #include "glm/detail/func_trigonometric.hpp"
 #include "glm/detail/type_vec.hpp"
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+TANK::Tank *tank01;
+
+void renderFrameCallback(float deltaTime) {
+  tank01->move(TANK::FORWARD, 2.5f * deltaTime);
+}
 
 int main() {
   glm::vec3 pointLightPositions[] = {
@@ -18,8 +24,13 @@ int main() {
   GLFWwindow *window = Engine::createWindow(SCR_WIDTH, SCR_HEIGHT);
   Engine engine(window, SCR_WIDTH, SCR_HEIGHT);
   engine.addScene();
-  engine.addGameObject("resources/objects/backpack/backpack.obj", glm::vec3(-6.0f, 0.0f, 0.0f));
-  engine.addGameObject("resources/objects/simple_tank/scene.gltf", glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.01f));
+  engine.getActiveScene().addGameObject("resources/objects/backpack/backpack.obj", glm::vec3(-6.0f, 0.0f, 0.0f));
+  engine.getActiveScene().addGameObject("resources/objects/simple_tank/scene.gltf", glm::vec3(6.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.01f));
+
+  tank01 = new TANK::Tank(glm::vec3(12.0f, 0.0f, 0.0f));
+  engine.getActiveScene().addGameObject(tank01->gameObject);
+
+  // setup lights
   DirectionalLight light(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
   glm::vec3 direction = light.direction;
   std::cout << "direction: " << direction.x << ", " << direction.y << ", " << direction.z << std::endl;
@@ -48,6 +59,8 @@ int main() {
   spotLight.cutOff = glm::cos(glm::radians(12.5f));
   spotLight.outerCutOff = glm::cos(glm::radians(15.0f));
   engine.getActiveScene().addLight(&spotLight);
+
+  engine.renderFrameCallback = &renderFrameCallback;
 
   engine.run();
   return 0;
