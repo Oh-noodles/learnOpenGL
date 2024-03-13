@@ -19,7 +19,7 @@ int main() {
   Engine engine(window, SCR_WIDTH, SCR_HEIGHT);
   engine.addScene();
   engine.addModel("resources/objects/backpack/backpack.obj", -2.0f, 0.0f, 0.0f);
-  engine.addModel("resources/objects/backpack/backpack.obj", 2.0f, 0.0f, 0.0f);
+  engine.addModel("resources/objects/simple_tank/scene.gltf", 2.0f, 0.0f, 0.0f);
   DirectionalLight light(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
   glm::vec3 direction = light.direction;
   std::cout << "direction: " << direction.x << ", " << direction.y << ", " << direction.z << std::endl;

@@ -11,10 +11,10 @@
 #include "learn/shader_s.hpp"
 
 class Engine {
-  private:
+  protected:
+    static Engine *instance;
     Shader *objectShader;
     Shader *lightSourceShader;
-    Camera *camera;
     unsigned int width;
     unsigned int height;
     GLFWwindow *window;
@@ -23,6 +23,7 @@ class Engine {
     Scene *activeScene = NULL;
   public:
     static GLFWwindow* createWindow(unsigned int width, unsigned int height);
+    static Engine* getInstance();
     Engine(GLFWwindow *window, unsigned int width, unsigned int height);
     ~Engine();
 

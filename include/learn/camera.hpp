@@ -11,7 +11,9 @@ enum Camera_Movement {
   FORWARD,
   BACKWARD,
   LEFT,
-  RIGHT
+  RIGHT,
+  UP,
+  DOWN
 };
 
 // default values
@@ -82,6 +84,12 @@ class Camera {
           break;
         case RIGHT:
           this->position += cameraSpeed * this->right;
+          break;
+        case UP:
+          this->position += cameraSpeed * this->up;
+          break;
+        case DOWN:
+          this->position -= cameraSpeed * this->up;
           break;
         default:
           break;
