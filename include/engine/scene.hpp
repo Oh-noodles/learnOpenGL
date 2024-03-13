@@ -1,6 +1,7 @@
 #ifndef __SCENE_HPP__
 #define __SCENE_HPP__
 
+#include "engine/gameObject.hpp"
 #include "glm/detail/type_vec.hpp"
 #include "learn/camera.hpp"
 #include "learn/model.hpp"
@@ -80,11 +81,16 @@ class Scene {
   public:
     Camera &camera;
     std::map<std::string, Light*> lights;
-    std::map<std::string, Model&> gameObjects;
+    std::map<std::string, GameObject&> gameObjects;
     std::string id;
     Scene();
     ~Scene();
-    int addGameObject(std::string const &path, float x, float y, float z);
+    int addGameObject(
+        std::string const &path,
+        glm::vec3 position = glm::vec3(0.0f),
+        glm::vec3 rotation = glm::vec3(0.0f),
+        glm::vec3 scaling = glm::vec3(1.0f)
+      );
     int addLight(Light *light);
 };
 

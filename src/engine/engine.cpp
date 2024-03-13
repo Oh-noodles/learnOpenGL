@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 /* #include "GLFW/glfw3.h" */
 #include "GLFW/glfw3.h"
+#include "engine/gameObject.hpp"
 #include "engine/scene.hpp"
 #include "glm/detail/type_mat.hpp"
 #include "glm/detail/type_vec.hpp"
@@ -129,12 +130,17 @@ void Engine::run() {
   return;
 }
 
-int Engine::addModel(string const &path, float x, float y, float z) {
+int Engine::addGameObject(
+    string const &path,
+    glm::vec3 position,
+    glm::vec3 rotation,
+    glm::vec3 scaling
+  ) {
   if (activeScene == NULL) {
     std::cout << "no active scene" << std::endl;
     return -1;
   }
-  activeScene->addGameObject(path, x, y, z);
+  activeScene->addGameObject(path, position, rotation, scaling);
   std::cout << "gameObject added" << std::endl;
   return 0;
   /* Model *model = new Model(path, glm::vec3(x, y, z)); */
@@ -209,12 +215,13 @@ void Engine::renderObjects() {
 
   // translate and render models
   for (auto &it: activeScene->gameObjects) {
-    Model &loadedModel = it.second;
+    GameObject &gameObject = it.second;
+    Model *loadedModel = gameObject.model;
     glm::mat4 model = glm::mat4(1.0f);
-    model= glm::translate(model, loadedModel.position);
-    model = glm::scale(model, glm::vec3(1.0f));
+    model = glm::translate(model, gameObject.position);
+    model = glm::scale(model, gameObject.scaling);
     shader->setMat4("model", model);
-    loadedModel.draw(*shader);
+    loadedModel->draw(*shader);
   }
 }
 

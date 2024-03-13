@@ -6,12 +6,13 @@
 #include <vector>
 #include "GLFW/glfw3.h"
 #include "engine/scene.hpp"
+#include "glm/detail/type_vec.hpp"
 #include "learn/camera.hpp"
 #include "learn/model.hpp"
 #include "learn/shader_s.hpp"
 
 class Engine {
-  protected:
+  private:
     static Engine *instance;
     Shader *objectShader;
     Shader *lightSourceShader;
@@ -30,7 +31,12 @@ class Engine {
     void run();
     int addScene();
     Scene& getActiveScene();
-    int addModel(string const &path, float x, float y, float z);
+    int addGameObject(
+        std::string const &path,
+        glm::vec3 position = glm::vec3(0.0f),
+        glm::vec3 rotation = glm::vec3(0.0f),
+        glm::vec3 scaling = glm::vec3(1.0f)
+      );
     void renderObjects();
 };
 

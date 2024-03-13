@@ -1,4 +1,6 @@
 #include "engine/scene.hpp"
+#include "engine/gameObject.hpp"
+#include "glm/detail/type_vec.hpp"
 #include <cstdlib>
 #include <string>
 #include <utility>
@@ -11,11 +13,16 @@ Scene::Scene(): camera(*(new Camera())) {
 
 Scene::~Scene() {}
 
-int Scene::addGameObject(std::string const &path, float x, float y, float z) {
+int Scene::addGameObject(
+    std::string const &path,
+    glm::vec3 position,
+    glm::vec3 rotation,
+    glm::vec3 scaling
+  ) {
   std::srand(std::time(nullptr) * std::rand());
   std::string id = std::to_string(std::rand());
-  Model *model = new Model(path, glm::vec3(x, y, z));
-  gameObjects.insert(std::pair<std::string, Model&>(id, *model));
+  GameObject *gameObject = new GameObject(path, position, rotation, scaling);
+  gameObjects.insert(std::pair<std::string, GameObject&>(id, *gameObject));
   return 0;
 }
 
