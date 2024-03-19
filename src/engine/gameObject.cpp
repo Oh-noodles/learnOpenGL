@@ -13,3 +13,5 @@ GameObject::GameObject(
   this->scaling = scaling;
   this->model = new Model(path);
 }
+
+ void GameObject::renderFrameCallback(float deltaTime) {}

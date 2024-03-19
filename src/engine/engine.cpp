@@ -6,9 +6,11 @@
 #include "GLFW/glfw3.h"
 #include "engine/gameObject.hpp"
 #include "engine/scene.hpp"
+#include "game/tank.hpp"
 #include "glm/detail/type_mat.hpp"
 #include "glm/detail/type_vec.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtx/vector_angle.hpp>
 #include "learn/camera.hpp"
 #include "learn/shader_s.hpp"
 #include "learn/stb_image.h"
@@ -34,6 +36,9 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window, Camera &camera, float deltaTime);
 void mouse_callback(GLFWwindow *window, double xPos, double yPos);
 void scroll_callback(GLFWwindow *window, double xOffset, double yOffset);
+
+float deltaTime = 0.1f;
+float lastFrameTime = static_cast<float>(glfwGetTime());
 
 Engine* Engine::instance = NULL;
 
@@ -111,8 +116,6 @@ Scene& Engine::getActiveScene() {
 }
 
 void Engine::run() {
-  float deltaTime = 0.1f;
-  float lastFrameTime = static_cast<float>(glfwGetTime());
 
   while (!glfwWindowShouldClose(window)) {
     if (activeScene == NULL) continue;
@@ -140,23 +143,20 @@ void Engine::run() {
   return;
 }
 
-int Engine::addGameObject(
-    string const &path,
-    glm::vec3 position,
-    glm::vec3 rotation,
-    glm::vec3 scaling
-  ) {
-  if (activeScene == NULL) {
-    std::cout << "no active scene" << std::endl;
-    return -1;
-  }
-  activeScene->addGameObject(path, position, rotation, scaling);
-  std::cout << "gameObject added" << std::endl;
-  return 0;
-  /* Model *model = new Model(path, glm::vec3(x, y, z)); */
-  /* models.push_back(model); */
-  /* return 0; */
-}
+/* int Engine::addGameObject( */
+/*     string const &path, */
+/*     glm::vec3 position, */
+/*     glm::vec3 rotation, */
+/*     glm::vec3 scaling */
+/*   ) { */
+/*   if (activeScene == NULL) { */
+/*     std::cout << "no active scene" << std::endl; */
+/*     return -1; */
+/*   } */
+/*   activeScene->addGameObject(path, position, rotation, scaling); */
+/*   std::cout << "gameObject added" << std::endl; */
+/*   return 0; */
+/* } */
 
 void setupLight(Shader *shader, Camera *camera, Light *light) {
   glm::vec3 vec;
@@ -227,9 +227,15 @@ void Engine::renderObjects() {
   for (auto &it: activeScene->gameObjects) {
     GameObject &gameObject = it.second;
     Model *loadedModel = gameObject.model;
+
+    gameObject.renderFrameCallback(deltaTime);
+
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, gameObject.position);
     model = glm::scale(model, gameObject.scaling);
+    model = glm::rotate(model, gameObject.rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, gameObject.rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, gameObject.rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
     shader->setMat4("model", model);
     loadedModel->draw(*shader);
   }

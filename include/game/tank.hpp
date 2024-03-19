@@ -11,18 +11,20 @@ namespace TANK {
 enum Tank_Direction {
   FORWARD,
   BACKWARD,
+  LEFT,
+  RIGHT
 };
 
 const float YAW         = 90.0f;
 const float PITCH       = 0.0f;
-const float SPEED       = 2.5f;
+const float SPEED       = 1.0f;
+const float ROTSPEED    = 30.0f;
 const float SENSITIVITY = 0.1f;
 
-class Tank {
+class Tank: public GameObject {
   private:
-    glm::vec3 position;
-    glm::vec3 rotation;
-    glm::vec3 front;
+    /* glm::vec3 position; */
+    /* glm::vec3 rotation; */
 
     float yaw = YAW;
     float pitch = PITCH;
@@ -30,14 +32,18 @@ class Tank {
     void updateVectors();
 
   public:
-    GameObject &gameObject;
+    glm::vec3 front = glm::vec3(0.0f, 0.0f, 1.0f);
+    /* GameObject &gameObject; */
     Tank(
       /* std::string const &path, */
       glm::vec3 position = glm::vec3(0.0f),
-      glm::vec3 rotation = glm::vec3(0.0f)
+      glm::vec3 rotation = glm::normalize(glm::vec3(0.0f))
     );
     void move(Tank_Direction direction, float deltaTime);
-    void rotate(float xOffset);
+    void rotate(Tank_Direction direction, float deltaTime);
+    void rotateByMouse(float xOffset);
+
+    virtual void renderFrameCallback(float deltaTime);
 };
 
 }

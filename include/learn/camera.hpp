@@ -47,7 +47,8 @@ class Camera {
 
     // constructor with vectors
     // position, up, yaw, pitch
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) {
+    // FIX: the axis y of position was set at 30 for debugging, please reset it to 0
+    Camera(glm::vec3 position = glm::vec3(0.0f, 30.0f, 3.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) {
       this->position = position;
       this->worldUp = worldUp;
       this->yaw = yaw;

@@ -17,6 +17,7 @@ class GameObject {
       glm::vec3 rotation = glm::vec3(0.0f),
       glm::vec3 scaling = glm::vec3(1.0f)
     );
+    virtual void renderFrameCallback(float deltaTime);
 };
 
 #endif // !DEBUG
