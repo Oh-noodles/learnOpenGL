@@ -4,10 +4,12 @@
 #include <ctime>
 #include <iostream>
 
-Enemy::Enemy(glm::vec3 position, glm::vec3 rotation): TANK::Tank(position, rotation) {}
+Enemy::Enemy(glm::vec3 position, glm::vec3 rotation)
+    : TANK::Tank(position, rotation) {}
 
 void Enemy::renderFrameCallback(float deltaTime) {
-  /* std::cout << "enemy renderFrameCallback: " << std::time(nullptr)<< std::endl; */
+  /* std::cout << "enemy renderFrameCallback: " << std::time(nullptr)<<
+   * std::endl; */
   autoDrive(deltaTime);
   /* move(TANK::FORWARD, deltaTime); */
 }
@@ -18,21 +20,23 @@ void Enemy::autoDrive(float deltaTime) {
     TANK::Tank_Direction direction = (TANK::Tank_Direction)(std::rand() % 4);
     drivingDirection = direction;
     drivingCountdown = std::rand() % (drivingDirection < 2 ? 10 : 4);
-    std::cout << "direction: " << direction << std::endl;
+    /* std::cout << "direction: " << direction << std::endl; */
   }
   /* std::cout << "drivingCountdown: " << drivingCountdown << std::endl; */
 
   switch (drivingDirection) {
-    case TANK::FORWARD:
-    case TANK::BACKWARD:
+  case TANK::FORWARD:
+    /* case TANK::BACKWARD: */
+    if (!collided)
       move(drivingDirection, TANK::SPEED * deltaTime);
-      break;
-    case TANK::LEFT:
-    case TANK::RIGHT:
-      rotate(drivingDirection, deltaTime);
-      break;
-    default:
-      break;
+    break;
+  case TANK::LEFT:
+  case TANK::RIGHT:
+    rotate(drivingDirection, deltaTime);
+    break;
+  default:
+    break;
   }
+
   drivingCountdown -= deltaTime;
 }
