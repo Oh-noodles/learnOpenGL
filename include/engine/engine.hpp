@@ -32,7 +32,7 @@ class Engine {
 
     void run();
     int addScene();
-    Scene& getActiveScene();
+    Scene* getActiveScene();
     /* int addGameObject( */
     /*     std::string const &path, */
     /*     glm::vec3 position = glm::vec3(0.0f), */

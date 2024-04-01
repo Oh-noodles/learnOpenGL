@@ -22,7 +22,7 @@ const float ROTSPEED    = 30.0f;
 const float SENSITIVITY = 0.1f;
 
 class Tank: public GameObject {
-  private:
+  protected:
     /* glm::vec3 position; */
     /* glm::vec3 rotation; */
 

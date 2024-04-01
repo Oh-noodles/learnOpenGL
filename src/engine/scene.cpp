@@ -6,7 +6,7 @@
 #include <utility>
 #include <map>
 
-Scene::Scene(): camera(*(new Camera())) {
+Scene::Scene(): camera(new Camera()) {
   std::srand(std::time(nullptr));
   id = std::to_string(std::rand());
 }

@@ -111,8 +111,8 @@ int Engine::addScene() {
   return 0;
 }
 
-Scene& Engine::getActiveScene() {
-  return *activeScene;
+Scene* Engine::getActiveScene() {
+  return activeScene;
 }
 
 void Engine::run() {
@@ -126,13 +126,15 @@ void Engine::run() {
     lastFrameTime = currentFrameTime;
 
 
-    processInput(window, activeScene->camera, deltaTime);
+    processInput(window, *(activeScene->camera), deltaTime);
 
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderObjects();
-    renderFrameCallback(deltaTime);
+
+    if (renderFrameCallback != NULL) renderFrameCallback(deltaTime);
+    if (activeScene->renderFrameCallback != NULL) activeScene->renderFrameCallback(deltaTime);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -207,7 +209,8 @@ void Engine::renderObjects() {
   shader->use();
   
   // set view/projection uniform
-  Camera *camera = &getActiveScene().camera;
+  Camera *camera = getActiveScene()->camera;
+  std::cout << "camera in render: " << camera->position.x << ", " << camera->position.y << ", " << camera->position.z << std::endl;
   glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)width/(float)height, 0.1f, 100.0f);
   glm::mat4 view = camera->GetViewMatrix();
   shader->setMat4("projection", projection);
@@ -257,49 +260,61 @@ void processInput(GLFWwindow *window, Camera &camera, float deltaTime) {
     glfwSetWindowShouldClose(window, true);
   }
 
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    camera.ProcessKeyboard(FORWARD, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    camera.ProcessKeyboard(BACKWARD, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    camera.ProcessKeyboard(LEFT, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    camera.ProcessKeyboard(RIGHT, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    camera.ProcessKeyboard(UP, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    camera.ProcessKeyboard(DOWN, deltaTime);
+  /* if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) */
+  /*   camera.ProcessKeyboard(FORWARD, deltaTime); */
+  /* if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) */
+  /*   camera.ProcessKeyboard(BACKWARD, deltaTime); */
+  /* if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) */
+  /*   camera.ProcessKeyboard(LEFT, deltaTime); */
+  /* if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) */
+  /*   camera.ProcessKeyboard(RIGHT, deltaTime); */
+  /* if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) */
+  /*   camera.ProcessKeyboard(UP, deltaTime); */
+  /* if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) */
+  /*   camera.ProcessKeyboard(DOWN, deltaTime); */
 }
 
 void mouse_callback(GLFWwindow *window, double xPosIn, double yPosIn) {
-  static bool firstMouse = false;
-  static float lastX = 0;
-  static float lastY = 0;
 
-  float xPos = static_cast<float>(xPosIn);
-  float yPos = static_cast<float>(yPosIn);
+  Engine *instance = Engine::getInstance();
+  if (!instance) return;
 
-  if (firstMouse) {
-    lastX = xPos;
-    lastY = yPos;
-    firstMouse = false;
+  Scene *scene = instance->getActiveScene();
+  if (!scene) return;
+
+  // mouseCallback of current active scene
+  if (scene->mouseCallback) {
+    scene->mouseCallback(window, xPosIn, yPosIn);
   }
 
-  float xOffset = xPos - lastX;
-  float yOffset = lastY - yPos;
-
-  lastX = xPos;
-  lastY = yPos;
-
-  Engine* engine = Engine::getInstance();
-  if (engine != NULL) {
-    engine->getActiveScene().camera.ProcessMouseMovement(xOffset, yOffset);
-  }
+  /* static bool firstMouse = false; */
+  /* static float lastX = 0; */
+  /* static float lastY = 0; */
+  /**/
+  /* float xPos = static_cast<float>(xPosIn); */
+  /* float yPos = static_cast<float>(yPosIn); */
+  /**/
+  /* if (firstMouse) { */
+  /*   lastX = xPos; */
+  /*   lastY = yPos; */
+  /*   firstMouse = false; */
+  /* } */
+  /**/
+  /* float xOffset = xPos - lastX; */
+  /* float yOffset = lastY - yPos; */
+  /**/
+  /* lastX = xPos; */
+  /* lastY = yPos; */
+  /**/
+  /* Engine* engine = Engine::getInstance(); */
+  /* if (engine != NULL) { */
+  /*   engine->getActiveScene()->camera.ProcessMouseMovement(xOffset, yOffset); */
+  /* } */
 }
 
 void scroll_callback(GLFWwindow *window, double xOffset, double yOffset) {
   Engine* engine = Engine::getInstance();
   if (engine != NULL) {
-    engine->getActiveScene().camera.ProcessMouseScroll(yOffset);
+    engine->getActiveScene()->camera->ProcessMouseScroll(yOffset);
   }
 }

@@ -1,6 +1,8 @@
 #ifndef __SCENE_HPP__
 #define __SCENE_HPP__
 
+#include <glad/glad.h>
+#include "GLFW/glfw3.h"
 #include "engine/gameObject.hpp"
 #include "glm/detail/type_vec.hpp"
 #include "learn/camera.hpp"
@@ -79,7 +81,7 @@ struct SpotLight: Light {
 class Scene {
   private:
   public:
-    Camera &camera;
+    Camera *camera;
     std::map<std::string, Light*> lights;
     std::map<std::string, GameObject&> gameObjects;
     std::string id;
@@ -93,6 +95,9 @@ class Scene {
         glm::vec3 scaling = glm::vec3(1.0f)
       );
     int addLight(Light *light);
+
+    void (*mouseCallback)(GLFWwindow *window, double xPosIn, double yPosIn) = NULL;
+    void (*renderFrameCallback)(float deltaTime) = NULL;
 };
 
 #endif // !__SCENE_HPP__

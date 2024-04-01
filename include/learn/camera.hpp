@@ -17,11 +17,11 @@ enum Camera_Movement {
 };
 
 // default values
-const float YAW         = -90.0f;
+const float YAW         = 90.0f;
 const float PITCH       = 0.0f;
 const float FOV         = 45.0f;
 
-const float SPEED       = 2.5f;
+const float SPEED       = 1.0f;
 const float SENSITIVITY = 0.1f;
 
 class Camera {
@@ -48,7 +48,7 @@ class Camera {
     // constructor with vectors
     // position, up, yaw, pitch
     // FIX: the axis y of position was set at 30 for debugging, please reset it to 0
-    Camera(glm::vec3 position = glm::vec3(0.0f, 30.0f, 3.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) {
+    Camera(glm::vec3 position = glm::vec3(0.0f, 10.0f, 3.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) {
       this->position = position;
       this->worldUp = worldUp;
       this->yaw = yaw;
@@ -117,7 +117,6 @@ class Camera {
       this->fov = fov;
     }
 
-  private:
     // calculates the front vector based on Euler Angles
     void updateCameraVectors() {
       glm::vec3 direction;
