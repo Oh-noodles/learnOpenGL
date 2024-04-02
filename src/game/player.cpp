@@ -28,9 +28,7 @@ void Player::rotateByMouse(float xOffset) {
 void Player::updateCamera() {
   glm::vec3 pos = this->position;
   pos.y = camera.position.y;
-  std::cout << "update camera pos: " << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
   camera.position = pos;
-  std::cout << "camera pos: " << camera.position.x << ", " << camera.position.y << ", " << camera.position.z << std::endl;
   camera.yaw = this->yaw;
   camera.pitch = this->pitch;
   camera.updateCameraVectors();

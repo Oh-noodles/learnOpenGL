@@ -13,10 +13,10 @@ Scene::Scene(): camera(new Camera()) {
 
 Scene::~Scene() {}
 
-int Scene::addGameObject(GameObject &gameObject) {
+int Scene::addGameObject(GameObject *gameObject) {
   std::srand(std::time(nullptr) * std::rand());
   std::string id = std::to_string(std::rand());
-  gameObjects.insert(std::pair<std::string, GameObject&>(id, gameObject));
+  gameObjects.insert({id, gameObject});
   return 0;
 }
 
@@ -29,7 +29,7 @@ int Scene::addGameObject(
   std::srand(std::time(nullptr) * std::rand());
   std::string id = std::to_string(std::rand());
   GameObject *gameObject = new GameObject(path, position, rotation, scaling);
-  gameObjects.insert(std::pair<std::string, GameObject&>(id, *gameObject));
+  gameObjects.insert({id, gameObject});
   return 0;
 }
 

@@ -20,7 +20,7 @@ class Engine {
     unsigned int height;
     GLFWwindow *window;
     std::vector<Model*> models;
-    std::map<std::string, Scene&> scenes;
+    std::map<std::string, Scene*> scenes;
     Scene *activeScene = NULL;
   public:
     static GLFWwindow* createWindow(unsigned int width, unsigned int height);

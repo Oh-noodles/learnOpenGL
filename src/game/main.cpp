@@ -63,11 +63,11 @@ int main() {
 
   Enemy enemy01(glm::vec3(2.0f, 1.0f, 6.0f));
   /* enemy01.rotateByMouse(180.0f * 10.0f); */
-  engine.getActiveScene()->addGameObject(enemy01);
+  engine.getActiveScene()->addGameObject(&enemy01);
   enemies.push_back(&enemy01);
 
   Enemy enemy02(glm::vec3(6.0f, 1.0f, 20.0f));
-  engine.getActiveScene()->addGameObject(enemy02);
+  engine.getActiveScene()->addGameObject(&enemy02);
   enemies.push_back(&enemy02);
 
   /* for (int i = 0; i < 20; i++) { */
@@ -78,7 +78,7 @@ int main() {
 
   Player player;
   gPlayer = &player;
-  engine.getActiveScene()->addGameObject(player);
+  engine.getActiveScene()->addGameObject(&player);
   engine.getActiveScene()->camera = &player.camera;
   engine.getActiveScene()->mouseCallback = mouseCallback;
   engine.getActiveScene()->renderFrameCallback = processInput;

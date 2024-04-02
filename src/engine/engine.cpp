@@ -106,7 +106,7 @@ Engine::~Engine() {
 
 int Engine::addScene() {
   Scene *scene = new Scene();
-  scenes.insert(std::pair<std::string, Scene&>(scene->id, *scene));
+  scenes.insert({scene->id, scene});
   activeScene = scene;
   return 0;
 }
@@ -210,7 +210,6 @@ void Engine::renderObjects() {
   
   // set view/projection uniform
   Camera *camera = getActiveScene()->camera;
-  std::cout << "camera in render: " << camera->position.x << ", " << camera->position.y << ", " << camera->position.z << std::endl;
   glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)width/(float)height, 0.1f, 100.0f);
   glm::mat4 view = camera->GetViewMatrix();
   shader->setMat4("projection", projection);
@@ -228,17 +227,17 @@ void Engine::renderObjects() {
 
   // translate and render models
   for (auto &it: activeScene->gameObjects) {
-    GameObject &gameObject = it.second;
-    Model *loadedModel = gameObject.model;
+    GameObject *gameObject = it.second;
+    if (gameObject == NULL) continue;
 
-    gameObject.renderFrameCallback(deltaTime);
-
+    Model *loadedModel = gameObject->model;
+    gameObject->renderFrameCallback(deltaTime);
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, gameObject.position);
-    model = glm::scale(model, gameObject.scaling);
-    model = glm::rotate(model, gameObject.rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, gameObject.rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, gameObject.rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, gameObject->position);
+    model = glm::scale(model, gameObject->scaling);
+    model = glm::rotate(model, gameObject->rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, gameObject->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, gameObject->rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
     shader->setMat4("model", model);
     loadedModel->draw(*shader);
   }

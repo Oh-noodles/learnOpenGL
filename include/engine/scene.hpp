@@ -83,11 +83,11 @@ class Scene {
   public:
     Camera *camera;
     std::map<std::string, Light*> lights;
-    std::map<std::string, GameObject&> gameObjects;
+    std::map<std::string, GameObject*> gameObjects;
     std::string id;
     Scene();
     ~Scene();
-    int addGameObject(GameObject &gameObject);
+    int addGameObject(GameObject *gameObject);
     int addGameObject(
         std::string const &path,
         glm::vec3 position = glm::vec3(0.0f),
