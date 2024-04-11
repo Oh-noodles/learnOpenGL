@@ -33,6 +33,12 @@ int Scene::addGameObject(
   return 0;
 }
 
+int Scene::removeGameObject(std::string id) {
+  gameObjects.erase(id);
+  std::cout << "gameObject has been removed: " << id << std::endl;
+  return 0;
+}
+
 int Scene::addLight(Light *light) {
   std::srand(std::time(nullptr) * std::rand());
   std::string id = std::to_string(std::rand());

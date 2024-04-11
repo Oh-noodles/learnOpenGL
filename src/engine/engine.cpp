@@ -226,9 +226,16 @@ void Engine::renderObjects() {
   }
 
   // translate and render models
-  for (auto &it: activeScene->gameObjects) {
-    GameObject *gameObject = it.second;
-    if (gameObject == NULL) continue;
+  for (auto it = activeScene->gameObjects.cbegin(); it != activeScene->gameObjects.cend(); ) {
+    std::string id = it->first;
+    GameObject *gameObject = it->second;
+    it++;
+
+    if (!gameObject) continue;
+    if (gameObject->toDestroy) {
+      activeScene->removeGameObject(id);
+      continue;
+    } 
 
     Model *loadedModel = gameObject->model;
     gameObject->renderFrameCallback(deltaTime);

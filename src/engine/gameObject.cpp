@@ -14,4 +14,10 @@ GameObject::GameObject(
   this->model = new Model(path);
 }
 
- void GameObject::renderFrameCallback(float deltaTime) {}
+// TODO: destroy the gameObject really
+void GameObject::destroy() {
+  std::cout << "this gameObject need to be destroyed" << std::endl;
+  toDestroy = true;
+}
+
+void GameObject::renderFrameCallback(float deltaTime) {}

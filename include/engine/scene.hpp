@@ -94,6 +94,7 @@ class Scene {
         glm::vec3 rotation = glm::vec3(0.0f),
         glm::vec3 scaling = glm::vec3(1.0f)
       );
+    int removeGameObject(std::string id);
     int addLight(Light *light);
 
     void (*mouseCallback)(GLFWwindow *window, double xPosIn, double yPosIn) = NULL;

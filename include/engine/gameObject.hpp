@@ -11,12 +11,16 @@ class GameObject {
     glm::vec3 position = glm::vec3(0.0f);
     glm::vec3 rotation = glm::vec3(0.0f);
     glm::vec3 scaling = glm::vec3(1.0f);
+    bool toDestroy = false;
+
     GameObject(
       std::string const &path,
       glm::vec3 position = glm::vec3(0.0f),
       glm::vec3 rotation = glm::vec3(0.0f),
       glm::vec3 scaling = glm::vec3(1.0f)
     );
+
+    void destroy();
     virtual void renderFrameCallback(float deltaTime);
 };
 

@@ -1,3 +1,4 @@
+#include "game/cannon.hpp"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "engine/engine.hpp"
@@ -14,6 +15,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 GLFWwindow *gWindow;
+Engine *gEngine;
 Player *gPlayer;
 TANK::Tank *tank01;
 std::vector<Enemy *> enemies;
@@ -52,6 +54,7 @@ int main() {
   GLFWwindow *window = Engine::createWindow(SCR_WIDTH, SCR_HEIGHT);
   gWindow = window;
   Engine engine(window, SCR_WIDTH, SCR_HEIGHT);
+  gEngine = &engine;
   engine.addScene();
   engine.getActiveScene()->addGameObject(
       "resources/objects/backpack/backpack.obj", glm::vec3(-2.0f, 0.0f, 0.0f));
@@ -61,14 +64,13 @@ int main() {
   /* tank01 = new TANK::Tank(glm::vec3(12.0f, 0.0f, 0.0f)); */
   /* engine.getActiveScene().addGameObject(*tank01); */
 
-  Enemy enemy01(glm::vec3(2.0f, 1.0f, 6.0f));
-  /* enemy01.rotateByMouse(180.0f * 10.0f); */
-  engine.getActiveScene()->addGameObject(&enemy01);
-  enemies.push_back(&enemy01);
-
-  Enemy enemy02(glm::vec3(6.0f, 1.0f, 20.0f));
-  engine.getActiveScene()->addGameObject(&enemy02);
-  enemies.push_back(&enemy02);
+  /* Enemy enemy01(glm::vec3(2.0f, 1.0f, 6.0f)); */
+  /* engine.getActiveScene()->addGameObject(&enemy01); */
+  /* enemies.push_back(&enemy01); */
+  /**/
+  /* Enemy enemy02(glm::vec3(6.0f, 1.0f, 20.0f)); */
+  /* engine.getActiveScene()->addGameObject(&enemy02); */
+  /* enemies.push_back(&enemy02); */
 
   /* for (int i = 0; i < 20; i++) { */
   /*   Enemy *enemy = new Enemy(glm::vec3(i * 10, 0, 0)); */
@@ -146,7 +148,18 @@ void mouseCallback(GLFWwindow *window, double xPosIn, double yPosIn) {
   }
 }
 
+void fire() {
+  glm::vec3 position = gPlayer->position;
+  glm::vec3 front = gPlayer->front;
+  position += front * 1.0f;
+  // initialize a cannon
+  CANNON::Cannon *cannon = new CANNON::Cannon(position, front);
+  gEngine->getActiveScene()->addGameObject(cannon);
+}
+
 void processInput(float deltaTime) {
+  static bool spacePressed = false;
+
   GLFWwindow *window = gWindow;
   if (!gPlayer) return;
 
@@ -156,4 +169,13 @@ void processInput(float deltaTime) {
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     // player move backward
     gPlayer->move(TANK::BACKWARD, deltaTime);
+  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    // fire!!
+    spacePressed = true;
+  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE) {
+    if (spacePressed) {
+      spacePressed = false;
+      fire();
+    }
+  }
 }
