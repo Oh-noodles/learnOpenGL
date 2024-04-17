@@ -10,7 +10,7 @@ class Player: public TANK::Tank {
     void updateCamera();
 
   public:
-    Camera &camera;
+    Camera *camera;
     bool collided = false;
     Player(
         glm::vec3 position = glm::vec3(0.0f),

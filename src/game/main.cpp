@@ -81,7 +81,7 @@ int main() {
   Player player;
   gPlayer = &player;
   engine.getActiveScene()->addGameObject(&player);
-  engine.getActiveScene()->camera = &player.camera;
+  engine.getActiveScene()->camera = player.camera;
   engine.getActiveScene()->mouseCallback = mouseCallback;
   engine.getActiveScene()->renderFrameCallback = processInput;
 
