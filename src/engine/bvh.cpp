@@ -3,31 +3,42 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <cstddef>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
+std::string Node::genId() {
+  std::srand(std::time(nullptr) * std::rand());
+  std::string id = std::to_string(std::rand());
+  return id;
+}
 
-Node::Node(bool isLeaf) {
+Node::Node(std::string id, bool isLeaf) {
+  this->id = id.empty() ? genId() : id;
   this->isLeaf = isLeaf;
 }
 
-Node::Node(bool isLeaf, float x1, float y1, float z1, float x2, float y2, float z2) {
+Node::Node(std::string id, bool isLeaf, float x1, float y1, float z1, float x2, float y2, float z2) {
+  this->id = genId();
+  this->id = id.empty() ? genId() : id;
   this->isLeaf = isLeaf;
   this->x1 = x1; this->y1 = y1; this->z1 = z1;
   this->x2 = x2; this->y2 = y2; this->z2 = z2;
   arrangePositions();
 }
 
-Node::Node(bool isLeaf, glm::vec3 lowerPos, glm::vec3 higherPos) {
+Node::Node(std::string id, bool isLeaf, glm::vec3 lowerPos, glm::vec3 higherPos) {
+  this->id = id.empty() ? genId() : id;
   this->isLeaf = isLeaf;
   this->x1 = lowerPos.x; this->y1 = lowerPos.y; this->z1 = lowerPos.z;
   this->x2 = higherPos.x; this->y2 = higherPos.y; this->z2 = higherPos.z;
   arrangePositions();
 }
 
-Node::Node(bool isLeaf, std::array<float, 6> positions) {
+Node::Node(std::string id, bool isLeaf, std::array<float, 6> positions) {
+  this->id = id.empty() ? genId() : id;
   this->isLeaf = isLeaf;
   this->x1 = positions[0]; this->y1 = positions[1]; this->z1 = positions[2];
   this->x2 = positions[3]; this->y2 = positions[4]; this->z2 = positions[5];
@@ -43,6 +54,12 @@ void Node::arrangePositions() {
   this->x1 = x1; this->y1 = y1; this->z1 = z1;
   this->x2 = x2; this->y2 = y2; this->z2 = z2;
 }
+
+/* void Node::updatePositions(float x1, float y1, float z1, float x2, float y2, float z2) { */
+/*   this->x1 = x1; this->y1 = y1; this->z1 = z1; */
+/*   this->x2 = x2; this->y2 = y2; this->z2 = z2; */
+/*   arrangePositions(); */
+/* } */
 
 void Node::refit() {
   if (left && right) {
@@ -172,10 +189,11 @@ std::ostream& operator<<(std::ostream &s, Node &node) {
 }
 
 DTree::DTree() {
-  dummyRoot = new Node(false);
+  dummyRoot = new Node("", false);
 }
 
 void DTree::insertLeaf(Node *newLeaf) {
+  nodeMap.insert({newLeaf->id, newLeaf});
   newLeaf->isLeaf = true;
   // ==== stage 1. finding the best sibling ====
   Node *node = dummyRoot->left;
@@ -210,7 +228,7 @@ void DTree::insertLeaf(Node *newLeaf) {
 
   // stage 2. create new parent and insert
   // node is the sibling we choose
-  Node *parent = new Node(false, Node::GetCombinedPositions({node, newLeaf}));
+  Node *parent = new Node("", false, Node::GetCombinedPositions({node, newLeaf}));
   parent->parent = node->parent;
   if (isLeft) {
     node->parent->left = parent;
@@ -234,6 +252,59 @@ void DTree::insertLeaf(Node *newLeaf) {
     /* positions = parent->getPositions(); */
     parent = parent->parent;
   }
+}
+
+void DTree::removeLeaf(Node *rmLeaf) {
+  if (!rmLeaf) return;
+  nodeMap.erase(rmLeaf->id);
+  Node *parent = rmLeaf->parent;
+  if (!parent) return;
+
+  if (parent->left == rmLeaf)
+    parent->left = NULL;
+  else
+    parent->right = NULL;
+
+  while (parent) {
+    if (!parent->left && !parent->right) {
+      Node *pp = parent->parent;
+      if (pp) {
+        if (pp->left == parent)
+          pp->left = NULL;
+        else
+          pp->right = NULL;
+      }
+      parent = pp;
+    } else {
+      parent->refit();
+      rotate(parent);
+      parent = parent->parent;
+    }
+  }
+}
+
+void DTree::removeLeaf(std::string id) {
+  Node *rmLeaf = nodeMap[id];// nodeMap.find(id)->second;
+  removeLeaf(rmLeaf);
+}
+
+void DTree::updateLeaf(Node *updLeaf,
+    float x1, float y1, float z1,
+    float x2, float y2, float z2) {
+  if (!updLeaf) return;
+
+  std::string id = updLeaf->id;
+  // remove
+  removeLeaf(updLeaf);
+  // regenerate (with same id) and insert
+  insertLeaf(new Node(id, true, x1, y1, z1, x2, y2, z2));
+}
+
+void DTree::updateLeaf(std::string id,
+    float x1, float y1, float z1,
+    float x2, float y2, float z2) {
+    Node *updLeaf = nodeMap[id]; // .find(id)->second;
+    updateLeaf(updLeaf, x1, y1, z1, x2, y2, z2);
 }
 
 void DTree::testCollision(Node *node, Node *collider) {
