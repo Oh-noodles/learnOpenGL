@@ -1,3 +1,4 @@
+#include "engine/collider.hpp"
 #include "game/cannon.hpp"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -72,11 +73,11 @@ int main() {
   /* engine.getActiveScene()->addGameObject(&enemy02); */
   /* enemies.push_back(&enemy02); */
 
-  /* for (int i = 0; i < 20; i++) { */
-  /*   Enemy *enemy = new Enemy(glm::vec3(i * 10, 0, 0)); */
-  /*   enemies.push_back(enemy); */
-  /*   engine.getActiveScene().addGameObject(*enemy); */
-  /* } */
+  for (int i = 0; i < 6; i++) {
+    Enemy *enemy = new Enemy(glm::vec3(i * 10, 0, 0));
+    enemies.push_back(enemy);
+    engine.getActiveScene()->addGameObject(enemy);
+  }
 
   Player player;
   gPlayer = &player;
@@ -84,6 +85,12 @@ int main() {
   engine.getActiveScene()->camera = player.camera;
   engine.getActiveScene()->mouseCallback = mouseCallback;
   engine.getActiveScene()->renderFrameCallback = processInput;
+
+
+  Collider::dTree->print();
+  Collider::dTree->drawSvg(0);
+  Collider::dTree->drawSvg(1);
+  Collider::dTree->drawSvg(2);
 
   // setup lights
   DirectionalLight light(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f),

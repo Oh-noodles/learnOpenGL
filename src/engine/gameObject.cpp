@@ -1,4 +1,6 @@
 #include "engine/gameObject.hpp"
+#include "engine/collider.hpp"
+#include "engine/utils.hpp"
 #include "glm/detail/type_vec.hpp"
 #include <string>
 
@@ -14,11 +16,15 @@ GameObject::GameObject(
     glm::vec3 rotation,
     glm::vec3 scaling
   ) {
-  this->id = genId();
+  this->id = Utils::uuid();
   this->position = position;
   this->rotation = rotation;
   this->scaling = scaling;
   this->model = new Model(path);
+}
+
+void GameObject::addCollider(glm::vec3 lowOffset, glm::vec3 highOffset) {
+  collider = new Collider(position, lowOffset, highOffset);
 }
 
 // TODO: destroy the gameObject really

@@ -1,4 +1,5 @@
 #include "game/player.hpp"
+#include "engine/collider.hpp"
 #include "game/tank.hpp"
 #include "glm/detail/type_vec.hpp"
 #include "learn/camera.hpp"
@@ -33,4 +34,6 @@ void Player::updateCamera() {
 }
 
 void Player::renderFrameCallback(float deltaTime) {
+  collider->update(position);
+  Collider::dTree->drawSvg(1);
 }

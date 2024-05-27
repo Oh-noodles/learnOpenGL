@@ -29,11 +29,11 @@ Node::Node(std::string id, bool isLeaf, float x1, float y1, float z1, float x2, 
   arrangePositions();
 }
 
-Node::Node(std::string id, bool isLeaf, glm::vec3 lowerPos, glm::vec3 higherPos) {
+Node::Node(std::string id, bool isLeaf, glm::vec3 lowPos, glm::vec3 highPos) {
   this->id = id.empty() ? genId() : id;
   this->isLeaf = isLeaf;
-  this->x1 = lowerPos.x; this->y1 = lowerPos.y; this->z1 = lowerPos.z;
-  this->x2 = higherPos.x; this->y2 = higherPos.y; this->z2 = higherPos.z;
+  this->x1 = lowPos.x; this->y1 = lowPos.y; this->z1 = lowPos.z;
+  this->x2 = highPos.x; this->y2 = highPos.y; this->z2 = highPos.z;
   arrangePositions();
 }
 
@@ -307,6 +307,10 @@ void DTree::updateLeaf(std::string id,
     updateLeaf(updLeaf, x1, y1, z1, x2, y2, z2);
 }
 
+void DTree::updateLeaf(std::string id, std::array<float, 6> positions) {
+  updateLeaf(id, positions[0], positions[1], positions[2], positions[3], positions[4], positions[5]);
+}
+
 void DTree::testCollision(Node *node, Node *collider) {
   if (Node::TestCollision(node, collider)) {
     if (node->isLeaf) collidedNodes.push_back(node);
@@ -471,7 +475,7 @@ void DTree::drawSvg(int view) {
   std::string filename = view == 0 ? "output-front.svg" : view == 1 ? "output-top.svg" : "output-left.svg";
   std::ofstream file;
   file.open(filename);
-  file << "<svg width=\"1000\" height=\"1000\" viewBox=\"0 0 150 150\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+  file << "<svg width=\"1000\" height=\"1000\" viewBox=\"-50 -50 100 100\" xmlns=\"http://www.w3.org/2000/svg\">\n";
   file.close();
   file.open(filename, std::ios_base::app);
   drawNode(dummyRoot->left, file, view);

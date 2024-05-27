@@ -17,8 +17,8 @@ class Node {
     std::string id;
     float x1 = 0, y1 = 0, z1 = 0;
     float x2 = 0, y2 = 0, z2 = 0;
-    /* glm::vec3 lowerPos = glm::vec3(0.0f); */
-    /* glm::vec3 higherPos = glm::vec3(0.0f); */
+    /* glm::vec3 lowPos = glm::vec3(0.0f); */
+    /* glm::vec3 highPos = glm::vec3(0.0f); */
     Node *parent = NULL;
     Node *left = NULL;
     Node *right = NULL;
@@ -33,7 +33,7 @@ class Node {
     Node(std::string id, bool isLeaf,
         float x1, float y1, float z1,
         float x2, float y2, float z2);
-    Node(std::string id, bool isLeaf, glm::vec3 lowerPos, glm::vec3 higherPos);
+    Node(std::string id, bool isLeaf, glm::vec3 lowPos, glm::vec3 highPos);
     Node(std::string id, bool isLeaf, std::array<float, 6>);
 
     /* void updatePositions(float x1, float y1, float z1, float x2, float y2, float z2); */
@@ -67,6 +67,7 @@ class DTree {
     void updateLeaf(std::string id,
         float x1, float y1, float z1,
         float x2, float y2, float z2);
+    void updateLeaf(std::string id, std::array<float, 6> positions);
     std::vector<Node*> getCollidedNodes(Node *collider);
     void print();
     // view: front(0), top(1), left(2)

@@ -14,6 +14,7 @@ Tank::Tank(
     glm::vec3 position,
     glm::vec3 rotation
   ): GameObject("resources/objects/simple_tank/scene.gltf", position, rotation, glm::vec3(0.01)) {
+  addCollider(glm::vec3(-1.0f), glm::vec3(1.0f));
 }
 
 void Tank::move(Tank_Direction direction, float deltaTime) {
@@ -49,4 +50,5 @@ void Tank::updateVectors() {
 
 void Tank::renderFrameCallback(float deltaTime) {
   /* std::cout << "tank renderFrameCallback: " << deltaTime << std::endl; */
+  collider->update(position);
 }
