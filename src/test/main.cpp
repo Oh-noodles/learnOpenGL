@@ -20,15 +20,15 @@ int main() {
   std::vector<Node*> nodesToRemove = {};
   std::vector<Node*> nodesToUpdate = {};
 
-  for (int i = 0; i < 100; i++) {
-    int x1 = randint();
-    int y1 = randint();
-    int z1 = randint();
-    Node *node = new Node("", true, x1, y1, z1, x1+width, y1+width, z1+width);
-    if (x1 >= 30)
-      nodesToRemove.push_back(node);
-    if (y1 > 50)
-      nodesToUpdate.push_back(node);
+  for (int i = 0; i < 6; i++) {
+    int x1 = i * 10; // randint();
+    int y1 = 0; // randint();
+    int z1 = 0; // randint();
+    Node *node = new Node(std::to_string(i), true, x1, y1, z1, x1+width, y1+width, z1+width);
+    /* if (x1 >= 30) */
+    /*   nodesToRemove.push_back(node); */
+    /* if (y1 > 50) */
+    /*   nodesToUpdate.push_back(node); */
     tree.insertLeaf(node);
     std::vector<Node*> collided = tree.getCollidedNodes(node);
     if (collided.size() > 0) {

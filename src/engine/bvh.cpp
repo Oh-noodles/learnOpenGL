@@ -107,7 +107,7 @@ std::array<float, 6> Node::GetCombinedPositions(std::vector<Node *> nodes) {
 
   if (first) assert("all nodes are invalid");
 
-  return {xMin, yMin, zMin, zMax, yMax, zMax};
+  return {xMin, yMin, zMin, xMax, yMax, zMax};
 }
 
 float Node::GetCombinedScore(std::vector<Node *> nodes) {
@@ -241,7 +241,7 @@ void DTree::insertLeaf(Node *newLeaf) {
   newLeaf->parent = parent;
 
   // stage 3. walk back up the tree,
-  // reffit, and try to rotate
+  // refit, and try to rotate
   /* std::array<float, 4> positions = parent->getPositions(); */
   parent = parent->parent;
   while (parent) {

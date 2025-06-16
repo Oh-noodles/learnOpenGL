@@ -1,0 +1,15 @@
+<svg width="1000" height="1000" viewBox="-50 -50 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path stroke="green" fill-opacity="0" stroke-width="0.2" d= "M -1.5 -1.5 L 1.5 -1.5 L 1.5 1.5 L -1.5 1.5 L -1.5 -1.5"/>
+  <path stroke="green" fill-opacity="0" stroke-width="0.2" d= "M -1.5 -1.5 L 1.5 -1.5 L 1.5 1.5 L -1.5 1.5 L -1.5 -1.5"/>
+  <path stroke="red" fill-opacity="0" stroke-width="0.2" d= "M -1 -1 L 1 -1 L 1 1 L -1 1 L -1 -1"/>
+  <path stroke="green" fill-opacity="0" stroke-width="0.2" d= "M -1.5 -1.5 L 1.5 -1.5 L 1.5 1.5 L -1.5 1.5 L -1.5 -1.5"/>
+  <path stroke="red" fill-opacity="0" stroke-width="0.2" d= "M -1 -1 L 1 -1 L 1 1 L -1 1 L -1 -1"/>
+  <path stroke="green" fill-opacity="0" stroke-width="0.2" d= "M -1.5 -1.5 L 1.5 -1.5 L 1.5 1.5 L -1.5 1.5 L -1.5 -1.5"/>
+  <path stroke="red" fill-opacity="0" stroke-width="0.2" d= "M -1 -1 L 1 -1 L 1 1 L -1 1 L -1 -1"/>
+  <path stroke="red" fill-opacity="0" stroke-width="0.2" d= "M -1 -1 L 1 -1 L 1 1 L -1 1 L -1 -1"/>
+  <path stroke="green" fill-opacity="0" stroke-width="0.2" d= "M -1.5 -1.5 L 1.5 -1.5 L 1.5 1.5 L -1.5 1.5 L -1.5 -1.5"/>
+  <path stroke="green" fill-opacity="0" stroke-width="0.2" d= "M -1.5 -1.5 L 1.5 -1.5 L 1.5 1.5 L -1.5 1.5 L -1.5 -1.5"/>
+  <path stroke="red" fill-opacity="0" stroke-width="0.2" d= "M -1 -1 L 1 -1 L 1 1 L -1 1 L -1 -1"/>
+  <path stroke="red" fill-opacity="0" stroke-width="0.2" d= "M -1 -1 L 1 -1 L 1 1 L -1 1 L -1 -1"/>
+  <path stroke="red" fill-opacity="0" stroke-width="0.2" d= "M -1 -1 L 1 -1 L 1 1 L -1 1 L -1 -1"/>
+</svg>

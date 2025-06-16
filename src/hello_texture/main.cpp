@@ -3,7 +3,7 @@
 #include <OpenGL/OpenGL.h>
 #include <iostream>
 #include <learn/shader_s.hpp>
-#define STB_IMAGE_IMPLEMENTATION
+// #define STB_IMAGE_IMPLEMENTATION
 #include <learn/stb_image.h>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);

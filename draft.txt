@@ -1,0 +1,12 @@
+we are going to bind BVH and
+gameobjects.
+
+we should design a Collider
+class. as a member of gameObject
+
+
+
+to simplify we use fixed offsets
+to dynamically get lowerPos and
+upperPos from current gameObject
+position.
